@@ -18,3 +18,4 @@ ENV PATH /usr/local/php7/sbin:$PATH
 CMD /bin/sh -c 'php-fpm && vim /etc/test.txt'
 
 EXPOSE 9000
+
