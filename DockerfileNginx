@@ -1,0 +1,29 @@
+# 指定基础镜像
+FROM centos:7
+
+#添加内容到镜像指定目录
+ADD nginx-1.12.2.tar.gz /usr/local/src
+
+# 运行yum命令去安装linux软件编译需要的两个安装包
+RUN yum install -y gcc gcc-c++ glibc make autoconf openssl openssl-devel oniguruma oniguruma-devel
+RUN yum install -y libxslt-devel gd gd-devel GeoIP GeoIP-devel pcre pcre-devel libzip libzip-devel
+
+#创建用户并指定shell
+RUN useradd -M -s /sbin/nologin nginx
+
+# 配置工作目录为 /usr/local/src/nginx-1.12.2
+WORKDIR /usr/local/src/nginx-1.12.2
+
+# 执行命令编译nginx
+RUN ./configure --user=nginx --group=nginx --prefix=/usr/local/nginx --with-file-aio --with-http_ssl_module --with-http_realip_module --with-http_addition_module --with-http_xslt_module --with-http_image_filter_module --with-http_geoip_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_auth_request_module --with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_stub_status_module && make && make install
+
+ADD nginx.conf /usr/local/nginx/conf/
+
+#添加ENV环境变量指令:
+ENV PATH /usr/local/nginx/sbin:$PATH
+
+#添加指令CMD,指定默认执行的命令:
+CMD /bin/sh -c 'nginx -g "daemon off;"'
+
+#声明镜像内服务监听的端口为80
+EXPOSE 80

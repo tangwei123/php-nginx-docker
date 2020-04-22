@@ -1,0 +1,20 @@
+FROM centos:7
+RUN yum install -y gcc gcc-c++ make gd-devel libxml2-devel libcurl-devel libjpeg-devel libpng-devel openssl-devel bison bzip2 bzip2-devel vim
+ADD php-7.2.30.tar.gz /usr/local/src/
+WORKDIR /usr/local/src/php-7.2.30
+RUN ./configure --prefix=/usr/local/php7 --exec-prefix=/usr/local/php7 --bindir=/usr/local/php7/bin --sbindir=/usr/local/php7/sbin --includedir=/usr/local/php7/include --libdir=/usr/local/php7/lib/php --mandir=/usr/local/php7/php/man --with-config-file-path=/usr/local/php7/etc --with-mysql-sock=/var/lib/mysql/mysql.sock --with-mhash --with-openssl --with-zlib --enable-zip --enable-mysqlnd --with-mysqli=shared,mysqlnd --with-pdo-mysql=shared,mysqlnd --with-gd --with-iconv --with-zlib --enable-zip --enable-inline-optimization --disable-debug --disable-rpath --enable-shared --enable-xml --enable-bcmath --enable-shmop --enable-sysvsem --enable-mbregex --enable-mbstring --enable-ftp --enable-pcntl --enable-sockets --with-xmlrpc --enable-soap --without-pear --with-gettext --enable-session --with-curl --with-jpeg-dir --with-freetype-dir --enable-opcache --enable-fpm  --with-fpm-user=nginx --with-fpm-group=nginx --without-gdbm --enable-fileinfo --with-bz2 --enable-maintainer-zts  --enable-sysvsem --enable-sysvshm --enable-sysvmsg  && make && make install
+
+RUN useradd -M -s /sbin/nologin nginx
+
+RUN mkdir -p /run/php-fpm/
+RUN chmod -R 0777 /run/php-fpm/
+
+ADD php-fpm.conf /usr/local/php7/etc/
+ADD www.conf /etc/php-fpm.d/
+ADD error.log /var/log/php-fpm/
+
+ENV PATH /usr/local/php7/sbin:$PATH
+
+CMD /bin/sh -c 'php-fpm && vim /etc/test.txt'
+
+EXPOSE 9000
