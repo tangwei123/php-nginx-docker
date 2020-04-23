@@ -16,4 +16,4 @@
     
     运行命令：
             docker build -f DockerfilePHP -t php7:v1 .
-            docker run --ip 182.10.0.19 -d -v php7file:/usr/local/php7 --name php7 --net 网络名称 -p 9000:9000 镜像名称
+            docker run --ip 182.10.0.19 -d -v php7file:/usr/local/php7 -v phpProject:/var/www/html/hhaj --name php7 --net 网络名称 -p 9000:9000 镜像名称
